@@ -4,8 +4,11 @@ import Hapi from 'hapi';
 import good from 'good';
 import goodConsole from 'good-console';
 import IncRoutes from './IncRoutes';
-import cors from 'cors';
 import bodyParser from 'body-parser';
+
+import routes from './routes/index.js';
+
+import './db';
 
 const server = module.exports = new Hapi.Server({
   debug: {
