@@ -11,7 +11,13 @@ function register(server, options, next) {
     path: '/tracks',
     config: {
       handler: TracksController.getAll,
-      tags: ['api'],
+      validate: {
+        query: {
+          limit: Joi.number().min(0).max(50),
+          page: Joi.number().min(0)
+        }
+      },
+      tags: ['api', 'tracks'],
       description: 'Get all songs in list',
       notes: 'Some notes here.'
     }

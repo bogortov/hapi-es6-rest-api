@@ -3,10 +3,9 @@ import http from 'http';
 import Hapi from 'hapi';
 import good from 'good';
 import goodConsole from 'good-console';
-import IncRoutes from './IncRoutes';
 import bodyParser from 'body-parser';
 
-import routes from './routes/index.js';
+import Tracks from './routes/Tracks.js';
 
 import './db';
 
@@ -63,8 +62,9 @@ plugins.push({
   }
 });
 
+//adding routes
 plugins.push({
-  register: IncRoutes.Tracks
+  register: Tracks
 });
 
 server.register(plugins, (err) => {
