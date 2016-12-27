@@ -1,8 +1,9 @@
 //libs
 import http from 'http';
 import Hapi from 'hapi';
-import good from 'good';
-import goodConsole from 'good-console';
+import Good from 'good';
+import GoodConsole from 'good-console';
+import GoodSqueeze from 'good-squeeze';
 import bodyParser from 'body-parser';
 
 import Tracks from './routes/Tracks.js';
@@ -27,7 +28,7 @@ server.connection({
   host: 'localhost',
   port: process.env.PORT || 8080,
   routes: {
-    log: false,
+    log: true,
     cors: {
       origin: ['*'],
       credentials: true
@@ -41,13 +42,19 @@ server.connection({
 
 let plugins = [];
 
-//adding logging
+//adding routes
 plugins.push({
-  register: good,
+  register: Tracks
+});
+
+server.register(plugins);
+
+server.register({
+  register: Good,
   options: {
     opsInterval: 5000,
     reporters: [{
-      reporter: goodConsole,
+      reporter: GoodConsole,
       events: {
         "log": [
           "error",
@@ -56,34 +63,25 @@ plugins.push({
         "request": [
           "error",
           "info"
+        ],
+        "response": [
+          "error",
+          "info"
         ]
       }
     }]
   }
-});
+}, (err) => {
 
-//adding routes
-plugins.push({
-  register: Tracks
-});
-
-server.register(plugins, (err) => {
   if (err) {
-    throw err;
+    throw err; // something bad happened loading the plugin
   }
 
-  // Prevent the server from being started when using it as a module
-  // (i.e. while unit testing)
-  if (!module.parent) {
-    // start hapi server
-    server.start((err) => {
-      if (err) {
-        throw err;
-      }
-      server.log(['info'], 'API server running at: ' + server.info.uri);
-    });
-  }
+  server.start((err) => {
 
+    if (err) {
+      throw err;
+    }
+    server.log('info', 'Server running at: ' + server.info.uri);
+  });
 });
-
-// export default server;
